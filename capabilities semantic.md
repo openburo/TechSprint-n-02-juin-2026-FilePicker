@@ -88,22 +88,22 @@ https://github.com/openburo/TechSprint-n-01-april-20206-FilePicker/blob/master/a
 
 ```ts
 type Manifest = Provider[];
-type Provider {
-  /** unique technical id */
-  id: string;
-  /** natural language pretty string for humans */
-  name: string;
-  /** Provider base url - probably only used to give an access point for admin, to know more about a given provider. */
-  url?: string;
-  /** 
-   * Expected format x.y.z?
-   * Version of the provider format.
-   * Use by the consumer to know how to parse a given entry.
-   * A manifest can have providers with different versions.
-   * TODO: do we need an implementation or a protocol version? Are they always aligned with the format?
-   */
-  version: string;
-  capabilities: Capability[]
+type Provider = {
+    /** unique technical id */
+    id: string;
+    /** natural language pretty string for humans */
+    name: string;
+    /** Provider base url - probably only used to give an access point for admin, to know more about a given provider. */
+    url?: string;
+    /**
+     * Expected format x.y.z?
+     * Version of the provider format.
+     * Use by the consumer to know how to parse a given entry.
+     * A manifest can have providers with different versions.
+     * TODO: do we need an implementation or a protocol version? Are they always aligned with the format?
+     */
+    version: string;
+    capabilities: Capability[]
 }
 
 /**
@@ -111,13 +111,12 @@ type Provider {
  * SAVE: send to the provider one file, many files, or a folder.
  * TODO: VIEW, CREATE, SHARE, EDIT
  */
-type Capability {
+type Capability = {
     action: "PICK" | "SAVE";
     /**
-     * Full url or relative url. If relative, use the provider url as the base.
-     * TODO: do we want the added complexity?
+     * Full url the provider service.
      */
-    path: string;
+    url: string;
     /**
      * A set of mimetypes that are allowed to be asked (e.g., all kind of files, only images for an image gallery).
      * When undefined, fallbacks to `['*\/*']`
@@ -129,13 +128,12 @@ type Capability {
      */
     multiple?: boolean;
 }
-
 ```
 
 ## To discuss
 
 - moving mimetypes/multiple out of "properties"?
-- fallback to url as the base of the path or mandatory full url?
+- [x] fallback to url as the base of the path or mandatory full url?
 
 ## For later
 
