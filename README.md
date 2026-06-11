@@ -1,13 +1,13 @@
-# TechSprint n°02 — Juin 2026 — File Picker
+# TechSprint #02 — June 2026 — File Picker
 
-Ce dépôt accueille les travaux de **définition d'un standard de File Picker pour Open Buro**.
+This repository hosts the work on **defining a File Picker standard for Open Buro**.
 
-L'objectif : permettre à n'importe quelle application (mail, docs, chat, agenda…) de
-demander à n'importe quel drive (TDrive, Fichier DINUM, Nextcloud…) de présenter une
-interface de sélection de fichiers, et de recevoir le résultat de manière standardisée.
+The goal: to allow any application (mail, docs, chat, calendar…) to ask any drive
+(TDrive, Fichier DINUM, Nextcloud…) to display a file selection interface, and to
+receive the result in a standardized way.
 
-## En savoir plus
+## Learn more
 
-- Contexte et présentation d'Open Buro :
-  [Post LinkedIn de Benjamin André](https://www.linkedin.com/posts/benjam1andre_la-workplace-souveraine-open-buro-et-la-activity-7470368736391389184-En8f?utm_source=share&utm_medium=member_desktop&rcm=ACoAAACiZrIBoTReH05MDF2nQXykjIdLih6OZGM)
-- TechSprint précédent : [TechSprint n°01 — Avril 2026](https://github.com/openburo/TechSprint-n-01-april-20206-FilePicker)
+- Background and introduction to Open Buro:
+  [LinkedIn post by Benjamin André](https://www.linkedin.com/posts/benjam1andre_la-workplace-souveraine-open-buro-et-la-activity-7470368736391389184-En8f?utm_source=share&utm_medium=member_desktop&rcm=ACoAAACiZrIBoTReH05MDF2nQXykjIdLih6OZGM)
+- Previous TechSprint: [TechSprint #01 — April 2026](https://github.com/openburo/TechSprint-n-01-april-20206-FilePicker)
