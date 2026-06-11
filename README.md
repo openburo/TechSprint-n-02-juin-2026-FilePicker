@@ -11,3 +11,7 @@ receive the result in a standardized way.
 - Background and introduction to Open Buro:
   [LinkedIn post by Benjamin André](https://www.linkedin.com/posts/benjam1andre_la-workplace-souveraine-open-buro-et-la-activity-7470368736391389184-En8f?utm_source=share&utm_medium=member_desktop&rcm=ACoAAACiZrIBoTReH05MDF2nQXykjIdLih6OZGM)
 - Previous TechSprint: [TechSprint #01 — April 2026](https://github.com/openburo/TechSprint-n-01-april-20206-FilePicker)
+
+## Work packages
+
+- [Capabilities semantic](./capabilities%20semantic.md)
