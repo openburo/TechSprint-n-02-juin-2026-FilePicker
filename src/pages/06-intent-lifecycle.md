@@ -42,14 +42,6 @@ Terminal messages also include `intent:cancel` and `intent:error` (with an error
 
 A consumer that receives messages **MUST** validate `event.origin` before acting on them.
 
-<!-- excalidraw src="../diagrams/sequence-messaging.excalidraw" alt="Intent lifecycle sequence" sha256="da8ccf882c435964c588b799bf816bca8a53a062cad071e85d1cbd148ab0cd69" -->
-[![Intent lifecycle sequence](../diagrams/sequence-messaging.excalidraw.svg)](../diagrams/sequence-messaging.excalidraw)
-<!-- /excalidraw -->
-
-<!-- excalidraw src="../diagrams/protocol-postmessage-scheme.excalidraw" alt="postMessage protocol scheme" sha256="b33989f1272846dcd20605223e89473503c4a0bbbc8428f8075976700f6616f7" -->
-[![postMessage protocol scheme](../diagrams/protocol-postmessage-scheme.excalidraw.svg)](../diagrams/protocol-postmessage-scheme.excalidraw)
-<!-- /excalidraw -->
-
 <!-- excalidraw src="../diagrams/protocol-postmessage-v1.excalidraw" alt="postMessage protocol V1" sha256="f59a8dc308d636869f478127bdbfdb28206402e9adad79b4947b6cdd410fe181" -->
 [![postMessage protocol V1](../diagrams/protocol-postmessage-v1.excalidraw.svg)](../diagrams/protocol-postmessage-v1.excalidraw)
 <!-- /excalidraw -->
