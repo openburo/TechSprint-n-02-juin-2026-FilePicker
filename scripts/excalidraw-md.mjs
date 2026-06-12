@@ -32,6 +32,7 @@ import { resolve, dirname, basename, join } from 'node:path';
 const CHECK = process.argv.includes('--check');
 const ROOT = process.cwd();
 const IGNORE_DIRS = new Set(['.git', 'node_modules', '.github']);
+const IGNORE_FILES = new Set(['OpenBuro-FilePicker.md']);
 
 // Matches a managed block. Group 1 = marker attributes, Group 2 = body (only
 // present once the block has been expanded with a closing marker). The opening
@@ -95,7 +96,7 @@ function* walkMarkdown(dir) {
     if (entry.isDirectory()) {
       if (IGNORE_DIRS.has(entry.name)) continue;
       yield* walkMarkdown(full);
-    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md') && !IGNORE_FILES.has(entry.name)) {
       yield full;
     }
   }

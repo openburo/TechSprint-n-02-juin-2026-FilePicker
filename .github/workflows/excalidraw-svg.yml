@@ -1,8 +1,8 @@
 name: Excalidraw diagrams
 
 # Verifies that every Excalidraw diagram referenced from Markdown has an
-# up-to-date committed SVG. This is a pure hash check — no browser needed — so
-# it runs in seconds. To regenerate locally: `npm install && npm run diagrams`.
+# up-to-date committed SVG. On main and manual runs, it also regenerates and
+# commits SVGs when needed.
 
 on:
   push:
@@ -10,17 +10,21 @@ on:
     paths:
       - '**/*.md'
       - '**/*.excalidraw'
+      - '**/*.excalidraw.svg'
       - 'scripts/excalidraw-md.mjs'
       - '.github/workflows/excalidraw-svg.yml'
   pull_request:
     paths:
       - '**/*.md'
       - '**/*.excalidraw'
+      - '**/*.excalidraw.svg'
       - 'scripts/excalidraw-md.mjs'
       - '.github/workflows/excalidraw-svg.yml'
+  workflow_dispatch:
 
 jobs:
   check:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,4 +32,34 @@ jobs:
         with:
           node-version: 20
       - name: Check diagrams are up to date
-        run: node scripts/excalidraw-md.mjs --check
+        run: npm run diagrams:check
+
+  generate:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Install Firefox for Excalidraw export
+        run: npx playwright install firefox
+      - name: Regenerate SVG diagrams
+        run: npm run diagrams
+      - name: Rebuild root document
+        run: npm run build:doc
+      - name: Commit generated diagrams
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/diagrams/*.excalidraw.svg src/pages/*.md OpenBuro-FilePicker.md
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: regenerate Excalidraw diagrams"
+            git push
+          fi

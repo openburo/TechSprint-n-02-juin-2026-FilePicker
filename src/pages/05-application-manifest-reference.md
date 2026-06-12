@@ -1,11 +1,11 @@
-# Open Buro Applications Manifest
+### 5.3 Application manifest generated reference
 
 *An Application manifest is the array of applications a consumer fetches in order to discover and resolve capabilities.*
 
-## Items
+#### Items
 
 - <a id="items"></a>**Items**: Refer to *[#/$defs/application](#%24defs/application)*.
-## Definitions
+#### Definitions
 
 - <a id="%24defs/application"></a>**`application`** *(object)*: An application that provides one or more capabilities. Cannot contain additional properties.
   - <a id="%24defs/application/properties/id"></a>**`id`** *(string, required)*: Unique, stable, technical identifier for the application, in reverse-DNS notation (lowercase, dot-separated, at least two labels). Must match pattern: `^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$` ([Test](https://regexr.com/?expression=%5E%5Ba-z0-9%5D%28%5Ba-z0-9-%5D%2A%5Ba-z0-9%5D%29%3F%28%5C.%5Ba-z0-9%5D%28%5Ba-z0-9-%5D%2A%5Ba-z0-9%5D%29%3F%29%2B%24)).
@@ -160,3 +160,4 @@ See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy#dir
   "application/pdf"
   ```
 
+---

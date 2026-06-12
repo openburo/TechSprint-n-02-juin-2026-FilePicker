@@ -6,7 +6,10 @@
   "description": "Tooling for the Open Buro File Picker TechSprint #02 (juin 2026)",
   "scripts": {
     "diagrams": "node scripts/excalidraw-md.mjs",
-    "diagrams:check": "node scripts/excalidraw-md.mjs --check"
+    "diagrams:check": "node scripts/excalidraw-md.mjs --check",
+    "build:doc": "node scripts/build-doc.mjs",
+    "build": "npm run diagrams && npm run build:doc",
+    "check": "npm run diagrams:check && npm run build:doc"
   },
   "devDependencies": {
     "excalidraw-brute-export-cli": "^0.4.0"

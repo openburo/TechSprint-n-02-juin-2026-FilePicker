@@ -1,7 +1,7 @@
 # Diagrams — Excalidraw → SVG in Markdown
 
-Diagrams live as editable `.excalidraw` source files in the repo. A small
-pipeline renders each referenced diagram to an SVG and embeds it in the
+Diagrams live as editable `.excalidraw` source files under `src/diagrams/`. A
+small pipeline renders each referenced diagram to an SVG and embeds it in the
 Markdown, so readers see the picture on GitHub while contributors keep editing
 the real source.
 
@@ -10,13 +10,14 @@ the real source.
 Write a single marker comment where you want the diagram to appear:
 
 ```markdown
-<!-- excalidraw src="OpenBuro-FilePicker-Scheme-consumer-provider-architecture.excalidraw" -->
+<!-- excalidraw src="../diagrams/consumer-provider-architecture.excalidraw" -->
 ```
 
-`src` is relative to the Markdown file. You can add a caption:
+`src` is relative to the Markdown file. Source pages live in `src/pages/`, so
+diagrams are usually referenced through `../diagrams/...`. You can add a caption:
 
 ```markdown
-<!-- excalidraw src="diagrams/lifecycle.excalidraw" alt="Intent lifecycle" -->
+<!-- excalidraw src="../diagrams/sequence-messaging.excalidraw" alt="Intent lifecycle" -->
 ```
 
 Then regenerate:
@@ -26,13 +27,14 @@ npm install                 # first time only — pulls the renderer
 npx playwright install-deps # first time only (CI/Linux: system libs)
 npx playwright install firefox
 npm run diagrams
+npm run build:doc
 ```
 
 The tool expands the marker into a managed block it fully owns:
 
 ```markdown
-<!-- excalidraw src="diagrams/lifecycle.excalidraw" alt="Intent lifecycle" sha256="…" -->
-[![Intent lifecycle](diagrams/lifecycle.excalidraw.svg)](diagrams/lifecycle.excalidraw)
+<!-- excalidraw src="../diagrams/sequence-messaging.excalidraw" alt="Intent lifecycle" sha256="…" -->
+[![Intent lifecycle](../diagrams/sequence-messaging.excalidraw.svg)](../diagrams/sequence-messaging.excalidraw)
 <!-- /excalidraw -->
 ```
 
@@ -51,9 +53,14 @@ deterministically from `src`, so the tool always knows which file to replace.
 ## CI
 
 `.github/workflows/excalidraw-svg.yml` runs `npm run diagrams:check` on every PR
-and push touching `.md` / `.excalidraw`. It is a **pure hash check** (no browser,
-no install) and fails if any diagram is out of date, pointing you to
+touching `.md` / `.excalidraw`. It is a **pure hash check** (no browser, no
+install) and fails if any diagram is out of date, pointing you to
 `npm run diagrams`.
+
+On `main` and manual runs, the same workflow installs the renderer, regenerates
+the SVG files, and commits generated changes when needed. The root
+`OpenBuro-FilePicker.md` file is checked separately by
+`.github/workflows/build-document.yml`.
 
 > Note on GitHub rendering: an embedded SVG image is shown flattened, so
 > per-element hyperlinks inside the diagram are not clickable in GitHub's

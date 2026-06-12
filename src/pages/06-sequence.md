@@ -1,8 +1,8 @@
-# Sequence of messages
+### 6.1 Message sequence details
 
-See [sequence-messaging.schema.json](./sequence-messaging.schema.json) for the schema of the messages.
+See [sequence-messaging.schema.json](../schemas/sequence-messaging.schema.json) for the schema of the messages.
 
-## intent:init
+#### intent:init
 
 ```jsonc
 {
@@ -12,7 +12,7 @@ See [sequence-messaging.schema.json](./sequence-messaging.schema.json) for the s
 }
 ```
 
-## intent:resize
+#### intent:resize
 
 This message is optional, not of mandatory use by the consumer. Not mandatory to send by the provider.
 Do not wait for this message to arrive nor be sent.
@@ -28,11 +28,11 @@ Do not wait for this message to arrive nor be sent.
 }
 ```
 
-## intent:progress
+#### intent:progress
 
 Very likely we will need to have it for chunking large files.
 
-## intent:done
+#### intent:done
 
 > Handled by others
 

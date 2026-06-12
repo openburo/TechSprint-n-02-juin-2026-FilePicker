@@ -1,8 +1,8 @@
-# Open Buro Provider Consumer Sequence Messaging Schema
+### 6.3 Sequence messaging schema generated reference
 
 *Validates the postMessage messages a provider iframe sends to the consumer during an intent. Every message has a `type` discriminator and a `payload` whose shape depends on `type`.*
 
-## Definitions
+#### Definitions
 
 - <a id="%24defs/intentInit"></a>**`intentInit`** *(object)*: Provider -> consumer. Cannot contain additional properties.
   - <a id="%24defs/intentInit/properties/type"></a>**`type`**: Must be: `"intent:init"`.
@@ -28,3 +28,5 @@
   - <a id="%24defs/intentDone/properties/type"></a>**`type`**: Must be: `"intent:done"`.
   - <a id="%24defs/intentDone/properties/payload"></a>**`payload`** *(object, required)*
     - <a id="%24defs/intentDone/properties/payload/properties/final"></a>**`final`** *(boolean)*: Whether this is the last intent:done for the intent. When false, more messages follow. When omitted, treated as final. Default: `true`.
+
+---

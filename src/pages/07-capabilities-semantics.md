@@ -1,6 +1,6 @@
-# Capabilities semantic
+### 7.3 Capabilities semantics working notes
 
-## Example from hackathon
+#### Example from hackathon
 
 https://github.com/openburo/TechSprint-n-01-april-20206-FilePicker/blob/master/application_manifest_registry.json
 
@@ -84,7 +84,7 @@ https://github.com/openburo/TechSprint-n-01-april-20206-FilePicker/blob/master/a
 ]
 ```
 
-## Formalisation
+#### Formalisation
 
 ```ts
 type Manifest = Provider[];
@@ -130,14 +130,16 @@ type Capability = {
 }
 ```
 
-## To discuss
+#### To discuss
 
 - moving mimetypes/multiple out of "properties"?
 - [x] fallback to url as the base of the path or mandatory full url?
 
-## For later
+#### For later
 
 * Consumer negocation (CORS, iframe...) - providers can have a need for a list of known consumers.
 * Security more generally
 * Folders?
 * More actions: VIEW, CREATE, SHARE, EDIT...
+
+---

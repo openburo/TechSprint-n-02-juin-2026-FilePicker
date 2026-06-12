@@ -1,0 +1,18 @@
+{
+  "name": "@openburo/application-manifest-codegen",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generates typed models from application-manifest.schema.json using quicktype.",
+  "scripts": {
+    "generate": "pnpm run generate:ts && pnpm run generate:python && pnpm run generate:php && pnpm run generate:java",
+    "check": "tsc --noEmit --strict generated/typescript/application-manifest.ts",
+    "generate:ts": "mkdir -p generated/typescript && quicktype --src-lang schema --src ../src/schemas/application-manifest.schema.json --lang typescript --top-level Application --out generated/typescript/application-manifest.ts",
+    "generate:python": "mkdir -p generated/python && quicktype --src-lang schema --src ../src/schemas/application-manifest.schema.json --lang python --python-version 3.7 --top-level Application --out generated/python/application_manifest.py",
+    "generate:php": "mkdir -p generated/php && jq '.[\"$defs\"].application.properties.name = {\"description\": .[\"$defs\"].application.properties.name.description}' ../src/schemas/application-manifest.schema.json | quicktype --src-lang schema --lang php --top-level Application --out generated/php/Application.php",
+    "generate:java": "mkdir -p generated/java/eu/openburo/manifest && quicktype --src-lang schema --src ../src/schemas/application-manifest.schema.json --lang java --package eu.openburo.manifest --top-level Application --out generated/java/eu/openburo/manifest/Application.java"
+  },
+  "devDependencies": {
+    "quicktype": "^23.2.6",
+    "typescript": "^5.8.0"
+  }
+}

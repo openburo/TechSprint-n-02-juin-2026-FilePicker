@@ -1,6 +1,6 @@
 # Codegen
 
-Generates typed models from [`../application-manifest.schema.json`](../application-manifest.schema.json) using [quicktype](https://quicktype.io/).
+Generates typed models from [`../src/schemas/application-manifest.schema.json`](../src/schemas/application-manifest.schema.json) using [quicktype](https://quicktype.io/).
 
 ## Usage
 

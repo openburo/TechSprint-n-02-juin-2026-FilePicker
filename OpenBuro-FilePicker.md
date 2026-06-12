@@ -126,9 +126,9 @@ Defining properties:
 | **Open Buro Bridge** | Reference implementation of the consumer-side lifecycle. |
 | **Capability chooser** | Lets the user pick among several matching providers. |
 
-> **[ DIAGRAM PLACEHOLDER — `consumer_provider_architecture` ]**
->
-> *Generation prompt:* "A clean, modern technical architecture diagram on a light background. Centre: a browser window containing two side-by-side panels — a left panel labelled 'Consumer (e.g. Mail)' and a right panel, visually distinct (different accent border), labelled 'Provider file picker (e.g. Drive)', connected by a horizontal double-headed arrow labelled 'postMessage'. Below the browser, two boxes: 'Platform registry (Open Buro server)' connected to the consumer by an arrow labelled 'list capabilities', and 'Provider backend' connected to the provider panel. A small library chip labelled 'Open Buro Bridge' overlaps the consumer panel. Flat vector style, restrained European-tech palette (deep blue, teal accent), thin lines, generous whitespace, labels in English."
+<!-- excalidraw src="src/diagrams/consumer-provider-architecture.excalidraw" alt="Consumer/provider architecture" sha256="52258ff15c8cb630151c7ace4d5b25ce6b62ed1d11b6b720ee95e4795ed0164a" -->
+[![Consumer/provider architecture](src/diagrams/consumer-provider-architecture.excalidraw.svg)](src/diagrams/consumer-provider-architecture.excalidraw)
+<!-- /excalidraw -->
 
 ---
 
@@ -170,10 +170,6 @@ The following use cases motivate the standard's design and illustrate the value 
 
 A File Picker exchange involves a **consumer**, one or more **providers**, a **platform registry** that advertises capabilities, and — on the consumer side — the **Open Buro Bridge** and the **capability chooser**.
 
-> **[ DIAGRAM PLACEHOLDER — `component_architecture` ]**
->
-> *Generation prompt:* "A component diagram, flat vector, light background. Four labelled blocks arranged around a central dashed boundary marked 'Browser': (1) 'Consumer app' containing two nested chips 'Open Buro Bridge' and 'Capability chooser'; (2) 'Provider app — file picker (iframe)'; an arrow 'postMessage (bidirectional)' between (1) and (2). Outside the browser boundary: (3) 'Platform registry / Open Buro server — capabilities list' with an arrow from the Bridge labelled 'GET capabilities'; (4) 'Provider backend' with an arrow from the provider iframe. Use distinct border colours for consumer vs provider to stress visual separation. English labels, thin connectors, ample whitespace."
-
 ### 5.2 The capabilities manifest
 
 Every application in the ecosystem — consumer or provider — **MUST** declare its capabilities in a **capabilities manifest** the format of which is part of the standard. Providers declare the file-picker capabilities they serve in the following format:
@@ -204,13 +200,13 @@ Field intent: `id`/`name`/`version` identify the provider; `url` locates the cap
 
 > `[RESERVED]` **Manifest JSON Schema.** A formal JSON Schema (types, required fields, allowed `properties` per action, extensibility rules, versioning policy) will be produced as a normative artefact. The snippet above is illustrative.
 
-### 5.3 The platform registry (discovery)
+### 5.4 The platform registry (discovery)
 
 The list of available capabilities is served by a minimal **platform registry** (the "Open Buro server") that exposes the capabilities of the workplace's applications. A consumer queries it to discover which capabilities the providers support: `PICK` or `SAVE`.
 
 **Out of scope (see §8.1):** *how* applications come to know the link to each other's capabilities manifest. A static configuration and a dynamic registry are both legitimate; the discovery transport is not constrained here.
 
-### 5.4 The Open Buro Bridge
+### 5.5 The Open Buro Bridge
 
 The consumer is responsible for the full intent lifecycle. Open Buro provides a reference library, the **Open Buro Bridge**, that implements it so consumers do not re-write it. The Bridge:
 
@@ -235,9 +231,173 @@ const result = await bridge.cast({
 
 > `[RESERVED]` **Open Buro Bridge — normative API reference.** The method surface, configuration options, framework bindings, and conformance expectations of the Bridge will be specified separately. The sketch above only conveys intent.
 
-### 5.5 The capability chooser
+### 5.6 The capability chooser
 
 When several providers expose the requested capability, the end-user must be able to choose. Implementing the chooser is the **consumer's responsibility**, but Open Buro ships a **shared standard implementation** so consumers can adopt a consistent, accessible chooser instead of building their own.
+
+---
+
+### 5.3 Application manifest generated reference
+
+*An Application manifest is the array of applications a consumer fetches in order to discover and resolve capabilities.*
+
+#### Items
+
+- <a id="items"></a>**Items**: Refer to *[#/$defs/application](#%24defs/application)*.
+#### Definitions
+
+- <a id="%24defs/application"></a>**`application`** *(object)*: An application that provides one or more capabilities. Cannot contain additional properties.
+  - <a id="%24defs/application/properties/id"></a>**`id`** *(string, required)*: Unique, stable, technical identifier for the application, in reverse-DNS notation (lowercase, dot-separated, at least two labels). Must match pattern: `^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$` ([Test](https://regexr.com/?expression=%5E%5Ba-z0-9%5D%28%5Ba-z0-9-%5D%2A%5Ba-z0-9%5D%29%3F%28%5C.%5Ba-z0-9%5D%28%5Ba-z0-9-%5D%2A%5Ba-z0-9%5D%29%3F%29%2B%24)).
+
+    Examples:
+    ```json
+    "com.twake.drive-filepicker"
+    ```
+
+    ```json
+    "eu.openburo.webdav-filepicker"
+    ```
+
+    ```json
+    "io.cozy.files"
+    ```
+
+  - <a id="%24defs/application/properties/name"></a>**`name`** *(string, required)*: Human-readable display name, e.g. shown in a chooser when several applications match. Can be used by screen readers. Default when no localization is available. Length must be at least 2.
+
+    Examples:
+    ```json
+    "Twake Drive File Picker"
+    ```
+
+  - <a id="%24defs/application/properties/localizedName"></a>**`localizedName`** *(object)*: Localized display names keyed by BCP 47 language tag. Number of properties must be at least 1. Can contain additional properties.
+    - <a id="%24defs/application/properties/localizedName/additionalProperties"></a>**Additional properties** *(string)*: Length must be at least 2.
+
+    Examples:
+    ```json
+    {
+        "en": "Twake Drive File Picker",
+        "fr": "S\u00e9lecteur de fichiers Twake Drive"
+    }
+    ```
+
+  - <a id="%24defs/application/properties/url"></a>**`url`** *(string, format: uri)*: Application base URL. Used for CSP and message origin verification.
+
+    Examples:
+    ```json
+    "https://drive.example.com/"
+    ```
+
+  - <a id="%24defs/application/properties/manifestVersion"></a>**`manifestVersion`** *(string)*: Version of this manifest entry's format, used by the consumer to know how to parse the entry. This is not the application's own version number. A single manifest may mix applications of different format versions. Length must be at least 1.
+
+    Examples:
+    ```json
+    "1"
+    ```
+
+  - <a id="%24defs/application/properties/icon"></a>**`icon`** *(string, format: uri)*: Optional URL to the application's icon, shown in the chooser when several applications match.
+
+    Examples:
+    ```json
+    "https://drive.example.com/favicon.svg"
+    ```
+
+  - <a id="%24defs/application/properties/capabilities"></a>**`capabilities`** *(array, required)*: The actions this application can perform. Length must be at least 0.
+    - <a id="%24defs/application/properties/capabilities/items"></a>**Items**: Refer to *[#/$defs/capability](#%24defs/capability)*.
+- <a id="%24defs/capability"></a>**`capability`** *(object)*: A single action an application can perform. Cannot contain additional properties.
+  - <a id="%24defs/capability/properties/action"></a>**`action`** *(string, required)*: The action this capability performs. The consumer uses it to match capabilities to the user's intent and may group capabilities by action in the chooser UI. Reserved actions: `PICK` - the consumer asks the application for one file, many files, or a folder. `SAVE` - the consumer sends one file, many files, or a folder to the application. `SHARE` - the consumer asks the application for a shareable URL to a document. Consumers must ignore capabilities whose action they do not recognize.
+    - **Any of**
+      - <a id="%24defs/capability/properties/action/anyOf/0"></a>: Actions reserved by this specification. Must be one of: "PICK", "SAVE", or "SHARE".
+      - <a id="%24defs/capability/properties/action/anyOf/1"></a>: Custom actions should carry a vendor prefix (e.g. `ACME_PUBLISH`); un-prefixed names are reserved for future versions of this specification. Must match pattern: `^[A-Z][A-Z0-9_]*$` ([Test](https://regexr.com/?expression=%5E%5BA-Z%5D%5BA-Z0-9_%5D%2A%24)).
+
+    Examples:
+    ```json
+    "PICK"
+    ```
+
+    ```json
+    "SAVE"
+    ```
+
+    ```json
+    "SHARE"
+    ```
+
+    ```json
+    "ACME_PUBLISH"
+    ```
+
+  - <a id="%24defs/capability/properties/path"></a>**`path`** *(string, format: uri, required)*: Endpoint that fulfils this capability. Absolute URL. Should return a UI for the user to pick or save files, and then return the picked or saved file(s) to the consumer.
+
+    Examples:
+    ```json
+    "https://drive.example.com/capabilities/filePicker.jsp"
+    ```
+
+  - <a id="%24defs/capability/properties/iframeAllow"></a>**`iframeAllow`** *(array)*: Permissions Policy features the application needs when opened in an iframe. The consumer uses this list to build the iframe `allow` attribute. When omitted, the application needs no extra features. Ignored for non-iframe targets.
+See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow. Length must be at least 1. Items must be unique.
+    - <a id="%24defs/capability/properties/iframeAllow/items"></a>**Items**: Refer to *[#/$defs/permissionsPolicyFeature](#%24defs/permissionsPolicyFeature)*.
+
+    Examples:
+    ```json
+    [
+        "clipboard-read",
+        "clipboard-write"
+    ]
+    ```
+
+    ```json
+    [
+        "camera",
+        "microphone",
+        "geolocation"
+    ]
+    ```
+
+  - <a id="%24defs/capability/properties/mimeTypes"></a>**`mimeTypes`** *(array)*: MIME filters the capability accepts (e.g. any file, or only images for a gallery). When omitted, the consumer falls back to the catch-all pattern accepting any file type. Not used outside of file-picking, saving or sharing capabilities. Length must be at least 1. Default: `["*/*"]`.
+    - <a id="%24defs/capability/properties/mimeTypes/items"></a>**Items**: Refer to *[#/$defs/mimePattern](#%24defs/mimePattern)*.
+  - <a id="%24defs/capability/properties/multiple"></a>**`multiple`** *(boolean)*: Whether the capability can pick or save multiple files. Only used for file-picking or saving capabilities. Default: `false`.
+- <a id="%24defs/permissionsPolicyFeature"></a>**`permissionsPolicyFeature`** *(string)*: A Permissions Policy directive name, as used in the iframe `allow` attribute (lowercase, hyphen-separated).
+See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy#directives. Must match pattern: `^[a-z]+(-[a-z]+)*$` ([Test](https://regexr.com/?expression=%5E%5Ba-z%5D%2B%28-%5Ba-z%5D%2B%29%2A%24)).
+
+  Examples:
+  ```json
+  "clipboard-read"
+  ```
+
+  ```json
+  "clipboard-write"
+  ```
+
+  ```json
+  "geolocation"
+  ```
+
+  ```json
+  "camera"
+  ```
+
+  ```json
+  "microphone"
+  ```
+
+  ```json
+  "fullscreen"
+  ```
+
+- <a id="%24defs/mimePattern"></a>**`mimePattern`** *(string)*: A full MIME type, a subtype wildcard (image/*), or the catch-all wildcard matching any type. Must match pattern: `^(\*/\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*/(\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*))$` ([Test](https://regexr.com/?expression=%5E%28%5C%2A/%5C%2A%7C%5BA-Za-z0-9%5D%5BA-Za-z0-9%21%23%24%26%5E_.%2B-%5D%2A/%28%5C%2A%7C%5BA-Za-z0-9%5D%5BA-Za-z0-9%21%23%24%26%5E_.%2B-%5D%2A%29%29%24)).
+
+  Examples:
+  ```json
+  "*/*"
+  ```
+
+  ```json
+  "image/*"
+  ```
+
+  ```json
+  "application/pdf"
+  ```
 
 ---
 
@@ -285,15 +445,196 @@ Terminal messages also include `intent:cancel` and `intent:error` (with an error
 
 A consumer that receives messages **MUST** validate `event.origin` before acting on them.
 
-> **[ DIAGRAM PLACEHOLDER — `intent_lifecycle_sequence` ]**
->
-> *Generation prompt:* "A vertical UML-style sequence diagram, flat vector, light background, two lifelines: 'Consumer (Open Buro Bridge)' and 'Provider (file-picker iframe)'. Ordered messages top to bottom: 'load iframe' (consumer→provider), 'intent:ready' (provider→consumer), 'intent:init {action, params}' (consumer→provider), a self-note on the provider 'user browses & selects', 'intent:resize {height}' dashed/optional (provider→consumer), 'intent:done {documents[]}' (provider→consumer), 'close iframe' (consumer→provider). Monospaced message labels, thin arrows, subtle activation bars, English."
+<!-- excalidraw src="src/diagrams/sequence-messaging.excalidraw" alt="Intent lifecycle sequence" sha256="da8ccf882c435964c588b799bf816bca8a53a062cad071e85d1cbd148ab0cd69" -->
+[![Intent lifecycle sequence](src/diagrams/sequence-messaging.excalidraw.svg)](src/diagrams/sequence-messaging.excalidraw)
+<!-- /excalidraw -->
 
-> **[ DIAGRAM PLACEHOLDER — `end_user_file_picking_journey` ]**
->
-> *Generation prompt:* "A 4-step horizontal end-user journey, flat vector, light background, friendly product-illustration style. Step 1: a mail composer with an 'Attach' button highlighted (label 'Consumer'). Step 2: a small chooser dialog listing two drives with logos (label 'Capability chooser — only if several providers'). Step 3: the chosen drive's own file browser shown in a clearly bordered modal over the dimmed mail composer (label 'Provider picker — visually distinct'). Step 4: the mail composer again, now with a file chip attached (label 'Result returned'). Numbered 1–4, English captions, consistent restrained palette."
+<!-- excalidraw src="src/diagrams/protocol-postmessage-scheme.excalidraw" alt="postMessage protocol scheme" sha256="b33989f1272846dcd20605223e89473503c4a0bbbc8428f8075976700f6616f7" -->
+[![postMessage protocol scheme](src/diagrams/protocol-postmessage-scheme.excalidraw.svg)](src/diagrams/protocol-postmessage-scheme.excalidraw)
+<!-- /excalidraw -->
+
+<!-- excalidraw src="src/diagrams/protocol-postmessage-v1.excalidraw" alt="postMessage protocol V1" sha256="f59a8dc308d636869f478127bdbfdb28206402e9adad79b4947b6cdd410fe181" -->
+[![postMessage protocol V1](src/diagrams/protocol-postmessage-v1.excalidraw.svg)](src/diagrams/protocol-postmessage-v1.excalidraw)
+<!-- /excalidraw -->
 
 > `[RESERVED]` **Normative `postMessage` message catalogue.** The complete, normative catalogue — every message type, its direction, required and optional fields, the canonical `document` object schema, the response modes (by reference vs by base64 content), size limits, and the error-code registry — will be specified as a normative artefact. The flow and payloads above are illustrative distillations of the TechSprint draft.
+
+---
+
+### 6.1 Message sequence details
+
+See [sequence-messaging.schema.json](src/schemas/sequence-messaging.schema.json) for the schema of the messages.
+
+#### intent:init
+
+```jsonc
+{
+    "type": "intent:init",  // Message between provider to consumer
+    "payload": {},
+    "": {}
+}
+```
+
+#### intent:resize
+
+This message is optional, not of mandatory use by the consumer. Not mandatory to send by the provider.
+Do not wait for this message to arrive nor be sent.
+
+```jsonc
+{
+    "type": "intent:resize",  // This message is from the provider to the consumer
+    "payload": {
+        "width": 800,
+        "height": 600
+    },
+    "": {}
+}
+```
+
+#### intent:progress
+
+Very likely we will need to have it for chunking large files.
+
+#### intent:done
+
+> Handled by others
+
+Worth adding a flag for the last message,
+so multiple `intent:done` messages can be sent
+(for streaming documents as they are downloaded)
+
+### 6.2 postMessage answer formats
+
+```json
+{
+  "type": "intent:done",
+  "action": "PICK",
+  "documents": [
+    {
+      "id": "abc-123",
+      "name": "report.pdf",
+      "mimeType": "application/pdf",
+      "url": "https://drive.example.com/share/abc-123?token=xyz",
+      "size": 245000
+    }
+  ]
+}
+```
+
+TODO: resize message
+TODO: check Google File Picker API for use cases
+TODO: error for unsupported transfer mode
+TODO: consumer can request preview size
+
+#### Message Definitions
+
+This section defines the contents of all `postMessage` messages.
+
+TODO: define top-level structure:
+```json
+{
+  "sourceId": "123", // file picker ID from the init parameters, to support multiple simultaneously open file pickers
+  "type": "intent:done", // do we need the `intent:` prefix?
+  "documents": [ … ]
+}
+```
+
+The elements of the `documents` array depend on various circumstances, even for the same initial action.
+
+##### Common Data in Responses
+
+Response messages which contain the results of the file picker have several common fields, which describe the picked data. They are described here once.
+
+Mandatory fields
+* `id`: string, unique identifier of this document. Reserved for future uses.
+* `name`: string, name of the file
+* `mimeType`: string, the MIME type of the file. If unknown, should be specified as `application/octet-stream`.
+* `size`: number, file size in bytes
+
+Optional fields might be missing.
+* `lastModified`: Date, last modified timestamp
+* `created`: Date, the timestamp when the file was created
+* TODO: version (from WebDAV), to preserve versioning information if relevant and possible.
+* Alternative: etag: any hash likely to identify the file content.
+* `preview`: A small image useful for previews. A nested `document`-like object with a small subset of fields:
+  * `content`: ArrayBuffer, the image content
+  * `mimeType`: string, the MIME type of the image
+  * `size`: number, file size in bytes
+
+##### Transfer Mode
+
+The content can be transferred from the provider to the consumer in multiple ways. Since consumers and providers may support only a subset of the defined options, there needs to be a way to negotiate the transfer mode. The provider specifies a list of supported modes in the field `modes` of each `capability`. The consumer selects one or more of these modes and specifies them as a comma-separated list in the URL query parameter `modes`. The response message from the provider contains at least one, but possibly multiple representations corresponding to the requested modes. If the provider does not support any of the requested modes (i.e. when the client requested modes which are not in the manifest) then the provider returns an error immediately.
+
+##### PICK
+
+###### By Reference
+
+The provider returns a temporary HTTPS URL which the consumer should download immediately. (Note: even for prototyping, a consumer on a secure page cannot access HTTP URLs.) The lifetime of the URL should be configurable. For big files, there might even be multiple lifetimes: a short time to start the download, and a longer time to finish it or to wait while no data is transferred.
+
+The URL should not be guessable. But limit the effect of a leaked URL, it should not contain any long-lived credentials. Instead, the URL should contain a random nonce, an HMAC-based signature or some other way to ensure that the URL cannot be guessed.
+
+* `url`: string, mandatory. A temporary unguessable HTTPS URL from which the consumer should download the document immediately.
+
+###### Embedded Content
+
+Instead of using a separate request to transfer file data, it might be simpler to include the file content in the message directly. This avoids potential errors which can occur during a later download. On the other hand, this only sensibly works for small files because the file needs to be downloaded to the browser from the provider, is kept completely in RAM, and then needs to be uploaded again (this time to the consumer back-end). Some providers might need to transfer the data to the browser anyway, e.g. to decrypt an end-to-end encrypted file. In this case, the overhead is technically necessary.
+
+* `content`: ArrayBuffer, the file contents. If possible, the same ArrayBuffer object should be passed as an array element of the 3rd parameter `transfer` to the `postMessage` function, to fully transfer the data between provider and consumer instead of duplicating it in RAM.
+
+TODO: MessageChannel
+
+###### Streaming Embedded Content
+
+To avoid loading an entire 10GB file into the RAM of an 8GB laptop, the contents might need to be streamed even for the embedded content use case.
+
+We postpone the protocol for this until later. This can be a separate mini-standard, since it will probably be useful in other contexts.
+
+###### Share Link
+
+* `share`: string, the URL where other users can access the document. This URL does not necessarily return the document directly. Instead it might be the entry URL to the provider application, where users are first required to log in.
+
+##### SAVE
+
+The content is either embedded in the request message, or the provider can return a URL to upload the content via PUT and/or POST.
+
+* `url`: string, The base URL where to upload documents with an HTTP PUT request. The actual URL of the request is built by appending the file name at the end of the URL, as the last path element separated by a slash. The security of this URL has the same considerations as the URL for the `PICK` action by reference.
+
+#### Feedback for the group
+
+* Do we want to specify what needs to be "Configurable" in addition to "Mandatory" and "Optional"?
+
+---
+
+### 6.3 Sequence messaging schema generated reference
+
+*Validates the postMessage messages a provider iframe sends to the consumer during an intent. Every message has a `type` discriminator and a `payload` whose shape depends on `type`.*
+
+#### Definitions
+
+- <a id="%24defs/intentInit"></a>**`intentInit`** *(object)*: Provider -> consumer. Cannot contain additional properties.
+  - <a id="%24defs/intentInit/properties/type"></a>**`type`**: Must be: `"intent:init"`.
+  - <a id="%24defs/intentInit/properties/payload"></a>**`payload`** *(object, required)*: Cannot contain additional properties.
+- <a id="%24defs/intentResize"></a>**`intentResize`** *(object)*: Provider -> consumer. Optional: not mandatory to send, and the consumer must not wait for it. Cannot contain additional properties.
+  - <a id="%24defs/intentResize/properties/type"></a>**`type`**: Must be: `"intent:resize"`.
+  - <a id="%24defs/intentResize/properties/payload"></a>**`payload`** *(object, required)*: Cannot contain additional properties.
+    - <a id="%24defs/intentResize/properties/payload/properties/width"></a>**`width`** *(number, required)*: Minimum: `0`.
+    - <a id="%24defs/intentResize/properties/payload/properties/height"></a>**`height`** *(number, required)*: Minimum: `0`.
+
+    Examples:
+    ```json
+    {
+        "width": 800,
+        "height": 600
+    }
+    ```
+
+- <a id="%24defs/intentProgress"></a>**`intentProgress`** *(object)*: Provider -> consumer. Progress updates, likely needed for chunking large files or streaming results. Cannot contain additional properties.
+  - <a id="%24defs/intentProgress/properties/type"></a>**`type`**: Must be: `"intent:progress"`.
+  - <a id="%24defs/intentProgress/properties/payload"></a>**`payload`** *(object, required)*
+- <a id="%24defs/intentDone"></a>**`intentDone`** *(object)*: Provider -> consumer. Delivers the result. May be sent more than once to stream documents as they are downloaded; `final` marks the last message. Cannot contain additional properties.
+  - <a id="%24defs/intentDone/properties/type"></a>**`type`**: Must be: `"intent:done"`.
+  - <a id="%24defs/intentDone/properties/payload"></a>**`payload`** *(object, required)*
+    - <a id="%24defs/intentDone/properties/payload/properties/final"></a>**`final`** *(boolean)*: Whether this is the last intent:done for the intent. When false, more messages follow. When omitted, treated as final. Default: `true`.
 
 ---
 
@@ -318,6 +659,152 @@ Select one or more existing items in the provider and return them to the consume
 ### 7.2 SAVE
 
 Deposit content supplied by the consumer into a location the user chooses in the provider (the provider serves a destination-selection widget). The consumer supplies `data: { content, filename }`; the response confirms the stored item.
+
+---
+
+### 7.3 Capabilities semantics working notes
+
+#### Example from hackathon
+
+https://github.com/openburo/TechSprint-n-01-april-20206-FilePicker/blob/master/application_manifest_registry.json
+
+```json
+[
+  { 
+    "id":"jalios-demo",
+    "name":"Jalios Demo",
+    "url":"https://openburo-jalios.eu.ngrok.io/en/",
+    "version":"0.1",
+    "capabilities": [
+      {
+        "action":"PICK",
+        "properties":{
+            "mimeTypes":["*/*"],
+            "multiple": true
+        },
+        "path":"https://openburo-jalios.eu.ngrok.io/en/plugins/OpenBuroPlugin/jsp/openBuroChooser.jsp"
+      }
+    ]
+  },
+  {
+    "id": "webdav-filepicker",
+    "name": "WebDAV File Picker",
+    "url": "http://10.4.0.32:5000",
+    "version": "1",
+    "capabilities": [
+      {
+        "action": "PICK",
+        "path": "http://10.4.0.32:5000/browse/",
+        "properties": {
+          "mimeTypes": [
+            "*/*"
+          ]
+        }
+      },
+      {
+        "action": "SAVE",
+        "path": "http://10.4.0.32:5000/save/",
+        "properties": {
+          "mimeTypes": [
+            "*/*"
+          ]
+        }
+      }
+    ],
+  },
+  {
+    "id": "fichiers-file-picker",
+    "name": "Fichiers File Picker",
+    "url": "https://837a-46-255-204-128.ngrok-free.app",
+    "version": "1",
+    "display": "modal",
+    "capabilities": [
+      {
+        "action": "PICK",
+        "path": "http://837a-46-255-204-128.ngrok-free.app/embed/file-picker",
+        "properties": {
+          "mimeTypes": [
+            "*/*"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "twake-drive-filepicker",
+    "name": "Twake Drive File Picker",
+    "url": "https://openburo1-drive.stg.lin-saas.com/openburo.json",
+    "version": "0.0.1",
+    "capabilities": [
+      {
+        "action": "PICK",
+        "properties": {
+          "mimeTypes": ["*/*"]
+        },
+        "path":"https://openburo1-drive.stg.lin-saas.com/capabilities/PICK"
+      }
+    ]
+  }
+]
+```
+
+#### Formalisation
+
+```ts
+type Manifest = Provider[];
+type Provider = {
+    /** unique technical id */
+    id: string;
+    /** natural language pretty string for humans */
+    name: string;
+    /** Provider base url - probably only used to give an access point for admin, to know more about a given provider. */
+    url?: string;
+    /**
+     * Expected format x.y.z?
+     * Version of the provider format.
+     * Use by the consumer to know how to parse a given entry.
+     * A manifest can have providers with different versions.
+     * TODO: do we need an implementation or a protocol version? Are they always aligned with the format?
+     */
+    version: string;
+    capabilities: Capability[]
+}
+
+/**
+ * PICK: ask the provider for one file, many files, or a folder.
+ * SAVE: send to the provider one file, many files, or a folder.
+ * TODO: VIEW, CREATE, SHARE, EDIT
+ */
+type Capability = {
+    action: "PICK" | "SAVE";
+    /**
+     * Full url the provider service.
+     */
+    url: string;
+    /**
+     * A set of mimetypes that are allowed to be asked (e.g., all kind of files, only images for an image gallery).
+     * When undefined, fallbacks to `['*\/*']`
+     */
+    mimeTypes?: string[];
+    /**
+     * Enable to pick or save multiple files. Default value false.
+     * TODO: do we want to handle folders?
+     */
+    multiple?: boolean;
+}
+```
+
+#### To discuss
+
+- moving mimetypes/multiple out of "properties"?
+- [x] fallback to url as the base of the path or mandatory full url?
+
+#### For later
+
+* Consumer negocation (CORS, iframe...) - providers can have a need for a list of known consumers.
+* Security more generally
+* Folders?
+* More actions: VIEW, CREATE, SHARE, EDIT...
 
 ---
 
@@ -414,6 +901,23 @@ To prevent interference between multiple concurrent picker invocations, each int
 - The consumer **MUST** correlate responses to the originating intent using this ID.
 
 > **Rationale:** Multiple tabs or rapid successive invocations could otherwise cause message collision. The intent ID acts as a session identifier for the lifecycle of a single picker interaction.
+
+---
+
+### 9.6 Authentication
+
+Authenticating the user of the consumer application to the provider application is not strictly part of the protocol. The only assumption is that the provider can rely on cookies or similar browser storage to re-use an existing session to avoid repeated logins every time the file picker opens.
+
+Typically, both the consumer and provider are using the same SSO system, which all but guarantees that a valid provider session can be obtained immediately and translarently for the user. In case this is not possible, the provider will need to open a login dialog in a new window, browser tab or popup. Showing a login dialog directly in the IFrame is not likely to work because of size constraints, and because modern browsers prevent IFrames from setting cookies.
+
+#### OIDC
+
+If the provider is using OIDC, then obtaining a session requires redirecting the IFrame to the OpenID Provider. To prevent the OpenID Provider from showing a login screen before returning, the parameter `prompt=none` needs to be used.
+
+#### Feedback for the group
+
+* camelCase vs snake_case for identifiers.
+* add optional username to init parameters, to be used with OIDC `login_hint` parameter?
 
 ---
 
