@@ -1,0 +1,14 @@
+{
+  "name": "openburo-filepicker-techsprint-02",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tooling for the Open Buro File Picker TechSprint #02 (juin 2026)",
+  "scripts": {
+    "diagrams": "node scripts/excalidraw-md.mjs",
+    "diagrams:check": "node scripts/excalidraw-md.mjs --check"
+  },
+  "devDependencies": {
+    "excalidraw-brute-export-cli": "^0.4.0"
+  }
+}

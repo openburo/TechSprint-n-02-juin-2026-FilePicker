@@ -18,6 +18,39 @@ Picking a file from one application while working in another is the smallest com
 
 We used [jsonschema2md](https://pypi.org/project/jsonschema2md/) to generate the markdown documentation from the schema definitions.
 
+## Editing the diagrams
+
+Diagrams in the Markdown files are not hand-drawn images: each one is generated
+from an editable **Excalidraw** source (`*.excalidraw`) committed in the repo.
+The `.svg` you see embedded is produced from that source, so the picture and the
+editable original never drift apart.
+
+**To change an existing diagram:**
+
+1. Open the `*.excalidraw` source — drag it into [excalidraw.com](https://excalidraw.com),
+   or use the *Excalidraw* extension in VS Code — edit it, and save back over the same file.
+2. Regenerate the embedded SVGs:
+   ```bash
+   npm install                  # first time only
+   npx playwright install firefox   # first time only
+   npm run diagrams
+   ```
+3. Commit the three things that changed together: the `*.excalidraw` source, the
+   regenerated `*.excalidraw.svg`, and the Markdown file.
+
+**To add a new diagram**, drop a single marker line where you want it to appear,
+then run `npm run diagrams` — it expands the marker into the embedded image:
+
+```markdown
+<!-- excalidraw src="path/to/your-diagram.excalidraw" alt="Short caption" -->
+```
+
+Don't edit anything between `<!-- excalidraw … -->` and `<!-- /excalidraw -->` by
+hand — re-run `npm run diagrams` instead. A CI check (`Excalidraw diagrams`) fails
+the build if a diagram is committed out of date, so you can't forget step 2.
+
+See **[DIAGRAMS.md](./DIAGRAMS.md)** for the full reference.
+
 ## Learn more
 
 - Background and introduction to Open Buro:
