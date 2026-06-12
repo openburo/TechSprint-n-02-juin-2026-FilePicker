@@ -18,29 +18,25 @@
           "examples": ["com.twake.drive-filepicker", "eu.openburo.webdav-filepicker", "io.cozy.files"]
         },
         "name": {
-          "description": "Human-readable display name, e.g. shown in a chooser when several applications match. Can be used by screen readers. Accepts either a plain string or an object keyed by BCP 47 language tag for localization.",
-          "oneOf": [
-            {
-              "type": "string",
-              "minLength": 2,
-              "examples": ["Twake Drive File Picker"]
-            },
-            {
-              "type": "object",
-              "description": "Localized display names keyed by BCP 47 language tag.",
-              "additionalProperties": { "type": "string", "minLength": 2 },
-              "minProperties": 1,
-              "propertyNames": {
-                "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$"
-              },
-              "examples": [{ "en": "Twake Drive File Picker", "fr": "Sélecteur de fichiers Twake Drive" }]
-            }
-          ]
+          "description": "Human-readable display name, e.g. shown in a chooser when several applications match. Can be used by screen readers. Default when no localization is available",
+          "type": "string",
+          "minLength": 2,
+          "examples": ["Twake Drive File Picker"]
+        },
+        "localizedName": {
+          "type": "object",
+          "description": "Localized display names keyed by BCP 47 language tag.",
+          "additionalProperties": { "type": "string", "minLength": 2 },
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$"
+          },
+          "examples": [{ "en": "Twake Drive File Picker", "fr": "Sélecteur de fichiers Twake Drive" }]
         },
         "url": {
           "type": "string",
           "format": "uri",
-          "description": "Application base URL. Informational entry point.",
+          "description": "Application base URL. Used for CSP and message origin verification.",
           "examples": ["https://drive.example.com/"]
         },
         "version": {
@@ -55,22 +51,16 @@
           "description": "Optional URL to the application's icon, shown in the chooser when several applications match.",
           "examples": ["https://drive.example.com/favicon.svg"]
         },
-        "iframeAllow": {
-          "type": "array",
-          "description": "Permissions Policy features the application needs when opened in an iframe. The consumer uses this list to build the iframe `allow` attribute. When omitted, the application needs no extra features. Ignored for non-iframe targets. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow",
-          "items": { "$ref": "#/$defs/permissionsPolicyFeature" },
-          "minItems": 1,
-          "uniqueItems": true,
-          "examples": [["clipboard-read", "clipboard-write"], ["camera", "microphone", "geolocation"]]
-        },
         "capabilities": {
           "type": "array",
           "description": "The actions this application can perform.",
-          "minItems": 1,
+          "$comment": "If we end up with two lists (consumers and providers), we might have consumer applications with no capabilities.",
+          "minItems": 0,
           "items": { "$ref": "#/$defs/capability" }
         }
       },
       "required": ["id", "name", "version", "capabilities"],
+      "$comment": "Capabilities must be defined, even if empty.",
       "additionalProperties": false
     },
 
@@ -80,22 +70,28 @@
       "properties": {
         "action": {
           "type": "string",
-          "description": "PICK: the consumer asks the application for one file, many files, or a folder. SAVE: the consumer sends one file, many files, or a folder to the application.",
+          "description": "`PICK`: the consumer asks the application for one file, many files, or a folder. `SAVE`: the consumer sends one file, many files, or a folder to the application.",
           "enum": ["PICK", "SAVE"]
         },
         "path": {
           "type": "string",
-          "format": "uri-reference",
-          "minLength": 1,
-          "description": "Endpoint that fulfils this capability. Either an absolute URL or a relative reference resolved against the application `url`. Should return a UI for the user to pick or save files, and then return the picked or saved file(s) to the consumer.",
+          "format": "uri",
+          "description": "Endpoint that fulfils this capability. Absolute URL. Should return a UI for the user to pick or save files, and then return the picked or saved file(s) to the consumer.",
           "examples": [
-            "https://drive.example.com/capabilities/PICK",
-            "/embed/file-picker"
+            "https://drive.example.com/capabilities/filePicker.jsp"
           ]
+        },
+        "iframeAllow": {
+          "type": "array",
+          "description": "Permissions Policy features the application needs when opened in an iframe. The consumer uses this list to build the iframe `allow` attribute. When omitted, the application needs no extra features. Ignored for non-iframe targets.\nSee https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow",
+          "items": { "$ref": "#/$defs/permissionsPolicyFeature" },
+          "minItems": 1,
+          "uniqueItems": true,
+          "examples": [["clipboard-read", "clipboard-write"], ["camera", "microphone", "geolocation"]]
         },
         "mimeTypes": {
           "type": "array",
-          "description": "MIME filters the capability accepts (e.g. any file, or only images for a gallery). When omitted, the consumer falls back to ['*/*'].",
+          "description": "MIME filters the capability accepts (e.g. any file, or only images for a gallery).",
           "minItems": 1,
           "items": { "$ref": "#/$defs/mimePattern" },
           "default": ["*/*"]
@@ -112,14 +108,14 @@
 
     "permissionsPolicyFeature": {
       "type": "string",
-      "description": "A Permissions Policy directive name, as used in the iframe `allow` attribute (lowercase, hyphen-separated).",
+      "description": "A Permissions Policy directive name, as used in the iframe `allow` attribute (lowercase, hyphen-separated).\nSee https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy#directives",
       "pattern": "^[a-z]+(-[a-z]+)*$",
       "examples": ["clipboard-read", "clipboard-write", "geolocation", "camera", "microphone", "fullscreen"]
     },
 
     "mimePattern": {
       "type": "string",
-      "description": "A full MIME type, a subtype wildcard (image/*), or the catch-all */*.",
+      "description": "A full MIME type, a subtype wildcard (`image/*`), or the catch-all `*/*`.",
       "pattern": "^(\\*/\\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*/(\\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*))$",
       "examples": ["*/*", "image/*", "application/pdf"]
     }
