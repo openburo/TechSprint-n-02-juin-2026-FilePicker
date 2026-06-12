@@ -7,27 +7,27 @@ class Application {
     private ?string $icon; // json:icon Optional
     private string $id; // json:id Required
     private ?stdClass $localizedName; // json:localizedName Optional
+    private string $manifestVersion; // json:manifestVersion Required
     private Object $name; // json:name Optional
     private ?string $url; // json:url Optional
-    private string $version; // json:version Required
 
     /**
      * @param array $capabilities
      * @param string|null $icon
      * @param string $id
      * @param stdClass|null $localizedName
+     * @param string $manifestVersion
      * @param Object $name
      * @param string|null $url
-     * @param string $version
      */
-    public function __construct(array $capabilities, ?string $icon, string $id, ?stdClass $localizedName, Object $name, ?string $url, string $version) {
+    public function __construct(array $capabilities, ?string $icon, string $id, ?stdClass $localizedName, string $manifestVersion, Object $name, ?string $url) {
         $this->capabilities = $capabilities;
         $this->icon = $icon;
         $this->id = $id;
         $this->localizedName = $localizedName;
+        $this->manifestVersion = $manifestVersion;
         $this->name = $name;
         $this->url = $url;
-        $this->version = $version;
     }
 
     /**
@@ -321,6 +321,66 @@ class Application {
     }
 
     /**
+     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
+     *
+     * @param string $value
+     * @throws Exception
+     * @return string
+     */
+    public static function fromManifestVersion(string $value): string {
+        return $value; /*string*/
+    }
+
+    /**
+     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
+     *
+     * @throws Exception
+     * @return string
+     */
+    public function toManifestVersion(): string {
+        if (Application::validateManifestVersion($this->manifestVersion))  {
+            return $this->manifestVersion; /*string*/
+        }
+        throw new Exception('never get to this Application::manifestVersion');
+    }
+
+    /**
+     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
+     *
+     * @param string
+     * @return bool
+     * @throws Exception
+     */
+    public static function validateManifestVersion(string $value): bool {
+        if (!is_string($value)) {
+            throw new Exception("Attribute Error:Application::manifestVersion");
+        }
+        return true;
+    }
+
+    /**
+     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
+     *
+     * @throws Exception
+     * @return string
+     */
+    public function getManifestVersion(): string {
+        if (Application::validateManifestVersion($this->manifestVersion))  {
+            return $this->manifestVersion;
+        }
+        throw new Exception('never get to getManifestVersion Application::manifestVersion');
+    }
+
+    /**
+     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
+     *
+     * @return string
+     */
+    public static function sampleManifestVersion(): string {
+        return 'Application::manifestVersion::35'; /*35:manifestVersion*/
+    }
+
+    /**
      * Human-readable display name, e.g. shown in a chooser when several applications match. Canbe used by screen readers. Default when no localization is available
      *
      * @param any $value
@@ -377,7 +437,7 @@ class Application {
      * @return Object
      */
     public static function sampleName(): Object {
-        return 'AnyType::Application::name::35';/*35:name*/
+        return 'AnyType::Application::name::36';/*36:name*/
     }
 
     /**
@@ -447,67 +507,7 @@ class Application {
      * @return ?string
      */
     public static function sampleURL(): ?string {
-        return 'Application::url::36'; /*36:url*/
-    }
-
-    /**
-     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
-     *
-     * @param string $value
-     * @throws Exception
-     * @return string
-     */
-    public static function fromVersion(string $value): string {
-        return $value; /*string*/
-    }
-
-    /**
-     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
-     *
-     * @throws Exception
-     * @return string
-     */
-    public function toVersion(): string {
-        if (Application::validateVersion($this->version))  {
-            return $this->version; /*string*/
-        }
-        throw new Exception('never get to this Application::version');
-    }
-
-    /**
-     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
-     *
-     * @param string
-     * @return bool
-     * @throws Exception
-     */
-    public static function validateVersion(string $value): bool {
-        if (!is_string($value)) {
-            throw new Exception("Attribute Error:Application::version");
-        }
-        return true;
-    }
-
-    /**
-     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
-     *
-     * @throws Exception
-     * @return string
-     */
-    public function getVersion(): string {
-        if (Application::validateVersion($this->version))  {
-            return $this->version;
-        }
-        throw new Exception('never get to getVersion Application::version');
-    }
-
-    /**
-     * Version of this manifest entry's format, used by the consumer to know how to parse theentry. This is not the application's own version number. A single manifest may mixapplications of different format versions.
-     *
-     * @return string
-     */
-    public static function sampleVersion(): string {
-        return 'Application::version::37'; /*37:version*/
+        return 'Application::url::37'; /*37:url*/
     }
 
     /**
@@ -519,9 +519,9 @@ class Application {
         || Application::validateIcon($this->icon)
         || Application::validateID($this->id)
         || Application::validateLocalizedName($this->localizedName)
+        || Application::validateManifestVersion($this->manifestVersion)
         || Application::validateName($this->name)
-        || Application::validateURL($this->url)
-        || Application::validateVersion($this->version);
+        || Application::validateURL($this->url);
     }
 
     /**
@@ -534,9 +534,9 @@ class Application {
         $out->{'icon'} = $this->toIcon();
         $out->{'id'} = $this->toID();
         $out->{'localizedName'} = $this->toLocalizedName();
+        $out->{'manifestVersion'} = $this->toManifestVersion();
         $out->{'name'} = $this->toName();
         $out->{'url'} = $this->toURL();
-        $out->{'version'} = $this->toVersion();
         return $out;
     }
 
@@ -551,9 +551,9 @@ class Application {
         ,Application::fromIcon($obj->{'icon'})
         ,Application::fromID($obj->{'id'})
         ,Application::fromLocalizedName($obj->{'localizedName'})
+        ,Application::fromManifestVersion($obj->{'manifestVersion'})
         ,Application::fromName($obj->{'name'})
         ,Application::fromURL($obj->{'url'})
-        ,Application::fromVersion($obj->{'version'})
         );
     }
 
@@ -566,9 +566,9 @@ class Application {
         ,Application::sampleIcon()
         ,Application::sampleID()
         ,Application::sampleLocalizedName()
+        ,Application::sampleManifestVersion()
         ,Application::sampleName()
         ,Application::sampleURL()
-        ,Application::sampleVersion()
         );
     }
 }

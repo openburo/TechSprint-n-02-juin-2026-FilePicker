@@ -121,14 +121,14 @@ class ApplicationElement:
     """Unique, stable, technical identifier for the application, in reverse-DNS notation
     (lowercase, dot-separated, at least two labels).
     """
-    name: str
-    """Human-readable display name, e.g. shown in a chooser when several applications match. Can
-    be used by screen readers. Default when no localization is available
-    """
-    version: str
+    manifest_version: str
     """Version of this manifest entry's format, used by the consumer to know how to parse the
     entry. This is not the application's own version number. A single manifest may mix
     applications of different format versions.
+    """
+    name: str
+    """Human-readable display name, e.g. shown in a chooser when several applications match. Can
+    be used by screen readers. Default when no localization is available
     """
     icon: Optional[str] = None
     """Optional URL to the application's icon, shown in the chooser when several applications
@@ -145,19 +145,19 @@ class ApplicationElement:
         assert isinstance(obj, dict)
         capabilities = from_list(Capability.from_dict, obj.get("capabilities"))
         id = from_str(obj.get("id"))
+        manifest_version = from_str(obj.get("manifestVersion"))
         name = from_str(obj.get("name"))
-        version = from_str(obj.get("version"))
         icon = from_union([from_str, from_none], obj.get("icon"))
         localized_name = from_union([lambda x: from_dict(from_str, x), from_none], obj.get("localizedName"))
         url = from_union([from_str, from_none], obj.get("url"))
-        return ApplicationElement(capabilities, id, name, version, icon, localized_name, url)
+        return ApplicationElement(capabilities, id, manifest_version, name, icon, localized_name, url)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["capabilities"] = from_list(lambda x: to_class(Capability, x), self.capabilities)
         result["id"] = from_str(self.id)
+        result["manifestVersion"] = from_str(self.manifest_version)
         result["name"] = from_str(self.name)
-        result["version"] = from_str(self.version)
         if self.icon is not None:
             result["icon"] = from_union([from_str, from_none], self.icon)
         if self.localized_name is not None:

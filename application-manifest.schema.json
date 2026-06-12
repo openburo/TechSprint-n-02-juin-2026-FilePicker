@@ -40,7 +40,7 @@
           "description": "Application base URL. Used for CSP and message origin verification.",
           "examples": ["https://drive.example.com/"]
         },
-        "version": {
+        "manifestVersion": {
           "type": "string",
           "minLength": 1,
           "description": "Version of this manifest entry's format, used by the consumer to know how to parse the entry. This is not the application's own version number. A single manifest may mix applications of different format versions.",
@@ -60,7 +60,7 @@
           "items": { "$ref": "#/$defs/capability" }
         }
       },
-      "required": ["id", "name", "version", "capabilities"],
+      "required": ["id", "name", "manifestVersion", "capabilities"],
       "$comment": "Capabilities must be defined, even if empty.",
       "additionalProperties": false
     },

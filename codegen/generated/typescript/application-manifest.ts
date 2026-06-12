@@ -33,6 +33,12 @@ export interface Application {
      */
     localizedName?: { [key: string]: string };
     /**
+     * Version of this manifest entry's format, used by the consumer to know how to parse the
+     * entry. This is not the application's own version number. A single manifest may mix
+     * applications of different format versions.
+     */
+    manifestVersion: string;
+    /**
      * Human-readable display name, e.g. shown in a chooser when several applications match. Can
      * be used by screen readers. Default when no localization is available
      */
@@ -41,12 +47,6 @@ export interface Application {
      * Application base URL. Used for CSP and message origin verification.
      */
     url?: string;
-    /**
-     * Version of this manifest entry's format, used by the consumer to know how to parse the
-     * entry. This is not the application's own version number. A single manifest may mix
-     * applications of different format versions.
-     */
-    version: string;
 }
 
 /**
@@ -260,9 +260,9 @@ const typeMap: any = {
         { json: "icon", js: "icon", typ: u(undefined, "") },
         { json: "id", js: "id", typ: "" },
         { json: "localizedName", js: "localizedName", typ: u(undefined, m("")) },
+        { json: "manifestVersion", js: "manifestVersion", typ: "" },
         { json: "name", js: "name", typ: "" },
         { json: "url", js: "url", typ: u(undefined, "") },
-        { json: "version", js: "version", typ: "" },
     ], false),
     "Capability": o([
         { json: "action", js: "action", typ: r("Action") },

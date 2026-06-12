@@ -14,9 +14,9 @@ public class Application {
     private String icon;
     private String id;
     private Map<String, String> localizedName;
+    private String manifestVersion;
     private String name;
     private String url;
-    private String version;
 
     /**
      * The actions this application can perform.
@@ -53,6 +53,16 @@ public class Application {
     public void setLocalizedName(Map<String, String> value) { this.localizedName = value; }
 
     /**
+     * Version of this manifest entry's format, used by the consumer to know how to parse the
+     * entry. This is not the application's own version number. A single manifest may mix
+     * applications of different format versions.
+     */
+    @JsonProperty("manifestVersion")
+    public String getManifestVersion() { return manifestVersion; }
+    @JsonProperty("manifestVersion")
+    public void setManifestVersion(String value) { this.manifestVersion = value; }
+
+    /**
      * Human-readable display name, e.g. shown in a chooser when several applications match. Can
      * be used by screen readers. Default when no localization is available
      */
@@ -68,14 +78,4 @@ public class Application {
     public String getURL() { return url; }
     @JsonProperty("url")
     public void setURL(String value) { this.url = value; }
-
-    /**
-     * Version of this manifest entry's format, used by the consumer to know how to parse the
-     * entry. This is not the application's own version number. A single manifest may mix
-     * applications of different format versions.
-     */
-    @JsonProperty("version")
-    public String getVersion() { return version; }
-    @JsonProperty("version")
-    public void setVersion(String value) { this.version = value; }
 }
