@@ -55,17 +55,13 @@
           "description": "Optional URL to the application's icon, shown in the chooser when several applications match.",
           "examples": ["https://drive.example.com/favicon.svg"]
         },
-        "target": {
+        "iframeAllow": {
           "type": "array",
-          "description": "Ordered list of how the consumer should open this application's capability UI. The first item is the preferred method; subsequent items are fallbacks.",
-          "items": {
-            "type": "string",
-            "enum": ["iframe", "popup"]
-          },
+          "description": "Permissions Policy features the application needs when opened in an iframe. The consumer uses this list to build the iframe `allow` attribute. When omitted, the application needs no extra features. Ignored for non-iframe targets. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow",
+          "items": { "$ref": "#/$defs/permissionsPolicyFeature" },
           "minItems": 1,
           "uniqueItems": true,
-          "default": ["iframe"],
-          "examples": [["iframe"], ["popup"], ["iframe", "popup"]]
+          "examples": [["clipboard-read", "clipboard-write"], ["camera", "microphone", "geolocation"]]
         },
         "capabilities": {
           "type": "array",
@@ -112,6 +108,13 @@
       },
       "required": ["action", "path"],
       "additionalProperties": false
+    },
+
+    "permissionsPolicyFeature": {
+      "type": "string",
+      "description": "A Permissions Policy directive name, as used in the iframe `allow` attribute (lowercase, hyphen-separated).",
+      "pattern": "^[a-z]+(-[a-z]+)*$",
+      "examples": ["clipboard-read", "clipboard-write", "geolocation", "camera", "microphone", "fullscreen"]
     },
 
     "mimePattern": {
