@@ -32,7 +32,9 @@ Every application in the ecosystem — consumer or provider — **MUST** declare
 
 Field intent: `id`/`name`/`version` identify the provider; `url` locates the capabilities manifest itself; each entry in `capabilities[]` binds an `action` (`PICK` | `SAVE`) to a `path` (the frontend surface to embed) and a set of `properties` (e.g. accepted `mimeTypes`, `multiple`); optional `display` hints at presentation (e.g. `modal`).
 
-> `[RESERVED]` **Manifest JSON Schema.** A formal JSON Schema (types, required fields, allowed `properties` per action, extensibility rules, versioning policy) will be produced as a normative artefact. The snippet above is illustrative.
+### 5.3 Application manifest generated reference
+
+See [application-manifest.schema.json](../schemas/application-manifest.schema.json) for the schema of the manifest.
 
 ### 5.4 The platform registry (discovery)
 
