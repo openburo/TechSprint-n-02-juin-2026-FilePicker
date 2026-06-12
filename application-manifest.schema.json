@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openburo.eu/schemas/v1/application-manifest.schema.json",
+  "title": "Open Buro Applications Manifest",
+  "description": "An Application manifest is the array of applications a consumer fetches in order to discover and resolve capabilities.",
+  "type": "array",
+  "items": { "$ref": "#/$defs/application" },
+
+  "$defs": {
+    "application": {
+      "type": "object",
+      "description": "An application that provides one or more capabilities.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique, stable, technical identifier for the application, in reverse-DNS notation (lowercase, dot-separated, at least two labels).",
+          "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$",
+          "examples": ["com.twake.drive-filepicker", "eu.openburo.webdav-filepicker", "io.cozy.files"]
+        },
+        "name": {
+          "description": "Human-readable display name, e.g. shown in a chooser when several applications match. Can be used by screen readers. Accepts either a plain string or an object keyed by BCP 47 language tag for localization.",
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 2,
+              "examples": ["Twake Drive File Picker"]
+            },
+            {
+              "type": "object",
+              "description": "Localized display names keyed by BCP 47 language tag.",
+              "additionalProperties": { "type": "string", "minLength": 2 },
+              "minProperties": 1,
+              "propertyNames": {
+                "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$"
+              },
+              "examples": [{ "en": "Twake Drive File Picker", "fr": "Sélecteur de fichiers Twake Drive" }]
+            }
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Application base URL. Informational entry point.",
+          "examples": ["https://drive.example.com/"]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Version of this manifest entry's format, used by the consumer to know how to parse the entry. This is not the application's own version number. A single manifest may mix applications of different format versions.",
+          "examples": ["1"]
+        },
+        "icon": {
+          "type": "string",
+          "format": "uri",
+          "description": "Optional URL to the application's icon, shown in the chooser when several applications match.",
+          "examples": ["https://drive.example.com/favicon.svg"]
+        },
+        "target": {
+          "type": "array",
+          "description": "Ordered list of how the consumer should open this application's capability UI. The first item is the preferred method; subsequent items are fallbacks.",
+          "items": {
+            "type": "string",
+            "enum": ["iframe", "popup"]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "default": ["iframe"],
+          "examples": [["iframe"], ["popup"], ["iframe", "popup"]]
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "The actions this application can perform.",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/capability" }
+        }
+      },
+      "required": ["id", "name", "version", "capabilities"],
+      "additionalProperties": false
+    },
+
+    "capability": {
+      "type": "object",
+      "description": "A single action an application can perform.",
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "PICK: the consumer asks the application for one file, many files, or a folder. SAVE: the consumer sends one file, many files, or a folder to the application.",
+          "enum": ["PICK", "SAVE"]
+        },
+        "path": {
+          "type": "string",
+          "format": "uri-reference",
+          "minLength": 1,
+          "description": "Endpoint that fulfils this capability. Either an absolute URL or a relative reference resolved against the application `url`. Should return a UI for the user to pick or save files, and then return the picked or saved file(s) to the consumer.",
+          "examples": [
+            "https://drive.example.com/capabilities/PICK",
+            "/embed/file-picker"
+          ]
+        },
+        "mimeTypes": {
+          "type": "array",
+          "description": "MIME filters the capability accepts (e.g. any file, or only images for a gallery). When omitted, the consumer falls back to ['*/*'].",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/mimePattern" },
+          "default": ["*/*"]
+        },
+        "multiple": {
+          "type": "boolean",
+          "description": "Whether the capability can pick or save multiple files.",
+          "default": false
+        }
+      },
+      "required": ["action", "path"],
+      "additionalProperties": false
+    },
+
+    "mimePattern": {
+      "type": "string",
+      "description": "A full MIME type, a subtype wildcard (image/*), or the catch-all */*.",
+      "pattern": "^(\\*/\\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*/(\\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*))$",
+      "examples": ["*/*", "image/*", "application/pdf"]
+    }
+  }
+}
