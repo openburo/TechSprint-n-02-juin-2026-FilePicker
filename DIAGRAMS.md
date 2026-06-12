@@ -24,7 +24,7 @@ Then regenerate:
 
 ```bash
 npm install                 # first time only — pulls the renderer
-npx playwright install-deps # first time only (CI/Linux: system libs)
+npx playwright install-deps # first time only on Linux
 npx playwright install firefox
 npm run diagrams
 npm run build:doc
@@ -50,17 +50,11 @@ The marker stores the `sha256` of the source at the last render. When the
 `*.excalidraw.svg` is re-rendered and re-embedded. The SVG path is derived
 deterministically from `src`, so the tool always knows which file to replace.
 
-## CI
+## Local check
 
-`.github/workflows/excalidraw-svg.yml` runs `npm run diagrams:check` on every PR
-touching `.md` / `.excalidraw`. It is a **pure hash check** (no browser, no
-install) and fails if any diagram is out of date, pointing you to
-`npm run diagrams`.
-
-On `main` and manual runs, the same workflow installs the renderer, regenerates
-the SVG files, and commits generated changes when needed. The root
-`OpenBuro-FilePicker.md` file is checked separately by
-`.github/workflows/build-document.yml`.
+Run `npm run diagrams:check` to verify that referenced diagrams are up to date.
+Run `npm run build` to regenerate SVGs and the root `OpenBuro-FilePicker.md`
+document.
 
 > Note on GitHub rendering: an embedded SVG image is shown flattened, so
 > per-element hyperlinks inside the diagram are not clickable in GitHub's

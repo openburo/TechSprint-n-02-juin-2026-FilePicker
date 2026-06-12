@@ -32,7 +32,7 @@ single-file deliverable at the root:
 - editable diagrams: `src/diagrams/*.excalidraw`;
 - generated deliverable: `OpenBuro-FilePicker.md`.
 
-Run `npm run check` before opening a pull request.
+Run `npm run check` to verify that diagrams and the generated root document are up to date.
 
 ## Generate documentation from JSON Schema
 
@@ -66,8 +66,7 @@ then run `npm run diagrams` — it expands the marker into the embedded image:
 ```
 
 Don't edit anything between `<!-- excalidraw … -->` and `<!-- /excalidraw -->` by
-hand — re-run `npm run diagrams` instead. A CI check (`Excalidraw diagrams`) fails
-the build if a diagram is committed out of date, so you can't forget step 2.
+hand — re-run `npm run diagrams` instead.
 
 See **[DIAGRAMS.md](./DIAGRAMS.md)** for the full reference.
 
