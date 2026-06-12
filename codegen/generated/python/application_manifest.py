@@ -1,10 +1,8 @@
-from enum import Enum
 from dataclasses import dataclass
 from typing import List, Optional, Any, Dict, TypeVar, Callable, Type, cast
 
 
 T = TypeVar("T")
-EnumT = TypeVar("EnumT", bound=Enum)
 
 
 def from_str(x: Any) -> str:
@@ -36,11 +34,6 @@ def from_bool(x: Any) -> bool:
     return x
 
 
-def to_enum(c: Type[EnumT], x: Any) -> EnumT:
-    assert isinstance(x, c)
-    return x.value
-
-
 def from_dict(f: Callable[[Any], T], x: Any) -> Dict[str, T]:
     assert isinstance(x, dict)
     return { k: f(v) for (k, v) in x.items() }
@@ -51,21 +44,17 @@ def to_class(c: Type[T], x: Any) -> dict:
     return cast(Any, x).to_dict()
 
 
-class Action(Enum):
-    """`PICK`: the consumer asks the application for one file, many files, or a folder. `SAVE`:
-    the consumer sends one file, many files, or a folder to the application.
-    """
-    PICK = "PICK"
-    SAVE = "SAVE"
-
-
 @dataclass
 class Capability:
     """A single action an application can perform."""
 
-    action: Action
-    """`PICK`: the consumer asks the application for one file, many files, or a folder. `SAVE`:
-    the consumer sends one file, many files, or a folder to the application.
+    action: str
+    """The action this capability performs. The consumer uses it to match capabilities to the
+    user's intent and may group capabilities by action in the chooser UI. Reserved actions:
+    `PICK` - the consumer asks the application for one file, many files, or a folder. `SAVE`
+    - the consumer sends one file, many files, or a folder to the application. `SHARE` - the
+    consumer asks the application for a shareable URL to a document. Consumers must ignore
+    capabilities whose action they do not recognize.
     """
     path: str
     """Endpoint that fulfils this capability. Absolute URL. Should return a UI for the user to
@@ -79,15 +68,18 @@ class Capability:
     """
     mime_types: Optional[List[str]] = None
     """MIME filters the capability accepts (e.g. any file, or only images for a gallery). When
-    omitted, the consumer falls back to the catch-all pattern accepting any file type.
+    omitted, the consumer falls back to the catch-all pattern accepting any file type. Not
+    used outside of file-picking, saving or sharing capabilities.
     """
     multiple: Optional[bool] = None
-    """Whether the capability can pick or save multiple files."""
+    """Whether the capability can pick or save multiple files. Only used for file-picking or
+    saving capabilities.
+    """
 
     @staticmethod
     def from_dict(obj: Any) -> 'Capability':
         assert isinstance(obj, dict)
-        action = Action(obj.get("action"))
+        action = from_str(obj.get("action"))
         path = from_str(obj.get("path"))
         iframe_allow = from_union([lambda x: from_list(from_str, x), from_none], obj.get("iframeAllow"))
         mime_types = from_union([lambda x: from_list(from_str, x), from_none], obj.get("mimeTypes"))
@@ -96,7 +88,7 @@ class Capability:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["action"] = to_enum(Action, self.action)
+        result["action"] = from_str(self.action)
         result["path"] = from_str(self.path)
         if self.iframe_allow is not None:
             result["iframeAllow"] = from_union([lambda x: from_list(from_str, x), from_none], self.iframe_allow)

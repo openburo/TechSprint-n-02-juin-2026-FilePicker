@@ -6,20 +6,24 @@ import com.fasterxml.jackson.annotation.*;
  * A single action an application can perform.
  */
 public class Capability {
-    private Action action;
+    private String action;
     private String[] iframeAllow;
     private String[] mimeTypes;
     private Boolean multiple;
     private String path;
 
     /**
-     * `PICK`: the consumer asks the application for one file, many files, or a folder. `SAVE`:
-     * the consumer sends one file, many files, or a folder to the application.
+     * The action this capability performs. The consumer uses it to match capabilities to the
+     * user's intent and may group capabilities by action in the chooser UI. Reserved actions:
+     * `PICK` - the consumer asks the application for one file, many files, or a folder. `SAVE`
+     * - the consumer sends one file, many files, or a folder to the application. `SHARE` - the
+     * consumer asks the application for a shareable URL to a document. Consumers must ignore
+     * capabilities whose action they do not recognize.
      */
     @JsonProperty("action")
-    public Action getAction() { return action; }
+    public String getAction() { return action; }
     @JsonProperty("action")
-    public void setAction(Action value) { this.action = value; }
+    public void setAction(String value) { this.action = value; }
 
     /**
      * Permissions Policy features the application needs when opened in an iframe. The consumer
@@ -34,7 +38,8 @@ public class Capability {
 
     /**
      * MIME filters the capability accepts (e.g. any file, or only images for a gallery). When
-     * omitted, the consumer falls back to the catch-all pattern accepting any file type.
+     * omitted, the consumer falls back to the catch-all pattern accepting any file type. Not
+     * used outside of file-picking, saving or sharing capabilities.
      */
     @JsonProperty("mimeTypes")
     public String[] getMIMETypes() { return mimeTypes; }
@@ -42,7 +47,8 @@ public class Capability {
     public void setMIMETypes(String[] value) { this.mimeTypes = value; }
 
     /**
-     * Whether the capability can pick or save multiple files.
+     * Whether the capability can pick or save multiple files. Only used for file-picking or
+     * saving capabilities.
      */
     @JsonProperty("multiple")
     public Boolean getMultiple() { return multiple; }

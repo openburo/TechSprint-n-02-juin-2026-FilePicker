@@ -72,8 +72,12 @@
       "properties": {
         "action": {
           "type": "string",
-          "description": "`PICK`: the consumer asks the application for one file, many files, or a folder. `SAVE`: the consumer sends one file, many files, or a folder to the application.",
-          "enum": ["PICK", "SAVE"]
+          "description": "The action this capability performs. The consumer uses it to match capabilities to the user's intent and may group capabilities by action in the chooser UI. Reserved actions: `PICK` - the consumer asks the application for one file, many files, or a folder. `SAVE` - the consumer sends one file, many files, or a folder to the application. `SHARE` - the consumer asks the application for a shareable URL to a document. Consumers must ignore capabilities whose action they do not recognize.",
+          "anyOf": [
+            { "enum": ["PICK", "SAVE", "SHARE"], "description": "Actions reserved by this specification." },
+            { "pattern": "^[A-Z][A-Z0-9_]*$", "description": "Custom actions should carry a vendor prefix (e.g. `ACME_PUBLISH`); un-prefixed names are reserved for future versions of this specification." }
+          ],
+          "examples": ["PICK", "SAVE", "SHARE", "ACME_PUBLISH"]
         },
         "path": {
           "type": "string",
@@ -93,14 +97,15 @@
         },
         "mimeTypes": {
           "type": "array",
-          "description": "MIME filters the capability accepts (e.g. any file, or only images for a gallery). When omitted, the consumer falls back to the catch-all pattern accepting any file type.",
+          "description": "MIME filters the capability accepts (e.g. any file, or only images for a gallery). When omitted, the consumer falls back to the catch-all pattern accepting any file type. Not used outside of file-picking, saving or sharing capabilities.",
           "minItems": 1,
+          "$comment": "Could be specified as an empty list `[]` for non file-picking capabilities (creating a calendar event, a meeting...), so the default is not applied.",
           "items": { "$ref": "#/$defs/mimePattern" },
           "default": ["*/*"]
         },
         "multiple": {
           "type": "boolean",
-          "description": "Whether the capability can pick or save multiple files.",
+          "description": "Whether the capability can pick or save multiple files. Only used for file-picking or saving capabilities.",
           "default": false
         }
       },

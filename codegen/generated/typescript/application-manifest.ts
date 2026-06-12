@@ -54,10 +54,14 @@ export interface Application {
  */
 export interface Capability {
     /**
-     * `PICK`: the consumer asks the application for one file, many files, or a folder. `SAVE`:
-     * the consumer sends one file, many files, or a folder to the application.
+     * The action this capability performs. The consumer uses it to match capabilities to the
+     * user's intent and may group capabilities by action in the chooser UI. Reserved actions:
+     * `PICK` - the consumer asks the application for one file, many files, or a folder. `SAVE`
+     * - the consumer sends one file, many files, or a folder to the application. `SHARE` - the
+     * consumer asks the application for a shareable URL to a document. Consumers must ignore
+     * capabilities whose action they do not recognize.
      */
-    action: Action;
+    action: string;
     /**
      * Permissions Policy features the application needs when opened in an iframe. The consumer
      * uses this list to build the iframe `allow` attribute. When omitted, the application needs
@@ -67,11 +71,13 @@ export interface Capability {
     iframeAllow?: string[];
     /**
      * MIME filters the capability accepts (e.g. any file, or only images for a gallery). When
-     * omitted, the consumer falls back to the catch-all pattern accepting any file type.
+     * omitted, the consumer falls back to the catch-all pattern accepting any file type. Not
+     * used outside of file-picking, saving or sharing capabilities.
      */
     mimeTypes?: string[];
     /**
-     * Whether the capability can pick or save multiple files.
+     * Whether the capability can pick or save multiple files. Only used for file-picking or
+     * saving capabilities.
      */
     multiple?: boolean;
     /**
@@ -79,15 +85,6 @@ export interface Capability {
      * pick or save files, and then return the picked or saved file(s) to the consumer.
      */
     path: string;
-}
-
-/**
- * `PICK`: the consumer asks the application for one file, many files, or a folder. `SAVE`:
- * the consumer sends one file, many files, or a folder to the application.
- */
-export enum Action {
-    Pick = "PICK",
-    Save = "SAVE",
 }
 
 // Converts JSON strings to/from your types
@@ -265,14 +262,10 @@ const typeMap: any = {
         { json: "url", js: "url", typ: u(undefined, "") },
     ], false),
     "Capability": o([
-        { json: "action", js: "action", typ: r("Action") },
+        { json: "action", js: "action", typ: "" },
         { json: "iframeAllow", js: "iframeAllow", typ: u(undefined, a("")) },
         { json: "mimeTypes", js: "mimeTypes", typ: u(undefined, a("")) },
         { json: "multiple", js: "multiple", typ: u(undefined, true) },
         { json: "path", js: "path", typ: "" },
     ], false),
-    "Action": [
-        "PICK",
-        "SAVE",
-    ],
 };
