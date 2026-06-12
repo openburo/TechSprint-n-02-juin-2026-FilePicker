@@ -9,6 +9,7 @@
   "$defs": {
     "application": {
       "type": "object",
+      "title": "Application",
       "description": "An application that provides one or more capabilities.",
       "properties": {
         "id": {
@@ -66,6 +67,7 @@
 
     "capability": {
       "type": "object",
+      "title": "Capability",
       "description": "A single action an application can perform.",
       "properties": {
         "action": {
@@ -91,7 +93,7 @@
         },
         "mimeTypes": {
           "type": "array",
-          "description": "MIME filters the capability accepts (e.g. any file, or only images for a gallery).",
+          "description": "MIME filters the capability accepts (e.g. any file, or only images for a gallery). When omitted, the consumer falls back to the catch-all pattern accepting any file type.",
           "minItems": 1,
           "items": { "$ref": "#/$defs/mimePattern" },
           "default": ["*/*"]
@@ -115,7 +117,7 @@
 
     "mimePattern": {
       "type": "string",
-      "description": "A full MIME type, a subtype wildcard (`image/*`), or the catch-all `*/*`.",
+      "description": "A full MIME type, a subtype wildcard (image/*), or the catch-all wildcard matching any type.",
       "pattern": "^(\\*/\\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*/(\\*|[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]*))$",
       "examples": ["*/*", "image/*", "application/pdf"]
     }
