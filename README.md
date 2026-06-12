@@ -14,6 +14,10 @@ Picking a file from one application while working in another is the smallest com
 
 - [Open Buro - Specification - File Picker ](./Open%20Buro%20—%20File%20Picker.md)
 
+## Generate documentation from JSON Schema
+
+We used [jsonschema2md](https://pypi.org/project/jsonschema2md/) to generate the markdown documentation from the schema definitions.
+
 ## Learn more
 
 - Background and introduction to Open Buro:
