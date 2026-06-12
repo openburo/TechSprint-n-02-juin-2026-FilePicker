@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openburo.eu/schemas/v1/sequence-provider-consumer-messaging.schema.json",
+  "title": "Open Buro Provider Consumer Sequence Messaging Schema",
+  "description": "Validates the postMessage messages a provider iframe sends to the consumer during an intent. Every message has a `type` discriminator and a `payload` whose shape depends on `type`.",
+  "oneOf": [
+    { "$ref": "#/$defs/intentInit" },
+    { "$ref": "#/$defs/intentResize" },
+    { "$ref": "#/$defs/intentProgress" },
+    { "$ref": "#/$defs/intentDone" }
+  ],
+
+  "$defs": {
+    "intentInit": {
+      "type": "object",
+      "title": "intent:init",
+      "description": "Provider -> consumer.",
+      "properties": {
+        "type": { "const": "intent:init" },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+
+    "intentResize": {
+      "type": "object",
+      "title": "intent:resize",
+      "description": "Provider -> consumer. Optional: not mandatory to send, and the consumer must not wait for it.",
+      "properties": {
+        "type": { "const": "intent:resize" },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "number", "minimum": 0 },
+            "height": { "type": "number", "minimum": 0 }
+          },
+          "required": ["width", "height"],
+          "additionalProperties": false,
+          "examples": [{ "width": 800, "height": 600 }]
+        }
+      },
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+
+    "intentProgress": {
+      "type": "object",
+      "title": "intent:progress",
+      "description": "Provider -> consumer. Progress updates, likely needed for chunking large files or streaming results.",
+      "$comment": "Payload shape is not yet defined in sequence.md; left unconstrained.",
+      "properties": {
+        "type": { "const": "intent:progress" },
+        "payload": { "type": "object" }
+      },
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+
+    "intentDone": {
+      "type": "object",
+      "title": "intent:done",
+      "description": "Provider -> consumer. Delivers the result. May be sent more than once to stream documents as they are downloaded; `final` marks the last message.",
+      "$comment": "The contents of payload (documents) are handled by others; only the last-message flag is defined here.",
+      "properties": {
+        "type": { "const": "intent:done" },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "final": {
+              "type": "boolean",
+              "description": "Whether this is the last intent:done for the intent. When false, more messages follow. When omitted, treated as final.",
+              "default": true
+            }
+          }
+        }
+      },
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    }
+  }
+}
