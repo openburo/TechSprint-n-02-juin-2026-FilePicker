@@ -57,22 +57,6 @@ Sections marked `[RESERVED]` are **not yet normative**. They name the artefact t
 
 ## Table of Contents
 
-<<<<<<< Updated upstream
-1. Introduction
-2. Terminology and Conventions
-3. Functional Overview
-4. Personas and Audience
-5. Architecture
-6. The Intent Lifecycle
-7. Capabilities Reference — PICK, SAVE, SHARE
-8. Scope and Assumptions
-9. Security Considerations
-10. Implementation Resources (How-tos)
-11. Open Items — the road to a normative specification
-- Appendix A — Prior Art and Rationale (non-normative)
-- Appendix B — Mapping from earlier terminology
-- References
-=======
 [Abstract](#abstract) · [Status of This Document](#status-of-this-document) · [Contributors](#contributors)
 
 1. [Terminology and Conventions](#1-terminology-and-conventions)
@@ -83,13 +67,12 @@ Sections marked `[RESERVED]` are **not yet normative**. They name the artefact t
 6. [The Intent Lifecycle](#6-the-intent-lifecycle)
 7. [Capabilities Reference — PICK, SAVE](#7-capabilities-reference--pick-save)
 8. [Scope and Assumptions](#8-scope-and-assumptions)
-9. [Security Considerations](#9-security-considerations-reserved)
+9. [Security Considerations](#9-security-considerations)
 10. [Implementation Resources (How-tos)](#10-implementation-resources-how-tos)
 11. [Open Items — the road to a normative specification](#11-open-items--the-road-to-a-normative-specification)
 - [Appendix A — Prior Art and Rationale](#appendix-a--prior-art-and-rationale-non-normative)
 - [Appendix B — Mapping from earlier terminology](#appendix-b--mapping-from-earlier-terminology)
 - [References](#references)
->>>>>>> Stashed changes
 
 ---
 
@@ -473,15 +456,9 @@ This Editor's Draft fixes the architecture and terminology. The following normat
 
 1. Manifest JSON Schema (§5.2).
 2. Open Buro Bridge normative API reference (§5.4).
-<<<<<<< Updated upstream
-3. Normative `postMessage` message catalogue, canonical `document` object, answer modes, size limits, and error-code registry (§6).
-4. SHARE parameter and response schema (§7.3).
-=======
 3. Normative `postMessage` message catalogue, canonical `document` object, response modes, size limits, and error-code registry (§6).
-4. Security model (§9).
->>>>>>> Stashed changes
-5. Mobile binding (§8.4).
-6. How-to pages (§10).
+4. Mobile binding (§8.4).
+5. How-to pages (§10).
 
 ---
 
