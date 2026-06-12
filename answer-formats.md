@@ -51,6 +51,10 @@ Optional fields might be missing.
 * `created`: Date, the timestamp when the file was created
 * TODO: version (from WebDAV), to preserve versioning information if relevant and possible.
 * Alternative: etag: any hash likely to identify the file content.
+* `preview`: A small image useful for previews. A nested `document`-like object with a small subset of fields:
+  * `content`: ArrayBuffer, the image content
+  * `mimeType`: string, the MIME type of the image
+  * `size`: number, file size in bytes
 
 ### Transfer Mode
 
@@ -65,10 +69,6 @@ The provider returns a temporary HTTPS URL which the consumer should download im
 The URL should not be guessable. But limit the effect of a leaked URL, it should not contain any long-lived credentials. Instead, the URL should contain a random nonce, an HMAC-based signature or some other way to ensure that the URL cannot be guessed.
 
 * `url`: string, mandatory. A temporary unguessable HTTPS URL from which the consumer should download the document immediately.
-* `preview`: optional. A small image useful for previews. A nested `document`-like object with a small subset of fields:
-  * `content`: ArrayBuffer, the image content
-  * `mimeType`: string, the MIME type of the image
-  * `size`: number, file size in bytes
 
 #### Embedded Content
 
